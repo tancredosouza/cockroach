@@ -328,6 +328,26 @@ NULL
 61
 228
 
+query I rowsort
+SELECT _int >> 3 FROM many_types
+----
+NULL
+15
+57
+
+statement error shift argument out of range
+SELECT _int << 64 FROM many_types
+
+statement error shift argument out of range
+SELECT _int << -10 FROM many_types
+
+query I rowsort
+SELECT _int >> 63 FROM many_types
+----
+NULL
+0
+0
+
 statement ok
 INSERT
   INTO many_types
