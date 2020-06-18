@@ -175,6 +175,12 @@ func registerBinOpOutputTypes() {
 		{typeconv.DatumVecCanonicalTypeFamily, anyWidth, typeconv.DatumVecCanonicalTypeFamily, anyWidth}: types.Any,
 	}
 
+	for _, binOp := range []tree.BinaryOperator{tree.LShift, tree.RShift} {
+		binOpOutputTypes[binOp] = map[typePair]*types.T{
+			typePair{types.IntFamily, anyWidth, types.IntFamily, anyWidth}: types.Int,
+		}
+	}
+
 	binOpOutputTypes[tree.JSONFetchVal] = map[typePair]*types.T{
 		{typeconv.DatumVecCanonicalTypeFamily, anyWidth, types.BytesFamily, anyWidth}: types.Any,
 	}
@@ -456,6 +462,17 @@ func (c intCustomizer) getBinOpAssignFunc() assignFunc {
 				{{.Target}} = {{.Left}} %s {{.Right}}
 			}
 		`, op.overloadBase.OpStr)))
+
+		case tree.LShift, tree.RShift:
+			// (tancredosouza) TODO: How should SQL telemetry be translated here?
+			t = template.Must(template.New("").Parse(`
+			{
+				if {{.Right}} < 0 || {{.Right}} >= 64 {
+					colexecerror.ExpectedError(tree.ErrShiftArgOutOfRange)
+				}
+				{{.Target}} = {{.Left}} {{.Op}} {{.Right}}
+			}
+			`))
 
 		default:
 			colexecerror.InternalError(fmt.Sprintf("unhandled binary operator %s", op.overloadBase.OpStr))

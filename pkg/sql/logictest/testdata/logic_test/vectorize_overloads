@@ -297,6 +297,37 @@ NULL
 11
 1111
 
+query T
+EXPLAIN (VEC) SELECT _int << 1 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftInt64Int64ConstOp
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _int >> 1 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projRShiftInt64Int64ConstOp
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _int << 1 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftInt64Int64ConstOp
+    └ *colexec.colBatchScan
+
+query I rowsort
+SELECT _int >> 1 FROM many_types
+----
+NULL
+61
+228
+
 statement ok
 INSERT
   INTO many_types
