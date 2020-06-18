@@ -177,8 +177,7 @@ func registerBinOpOutputTypes() {
 
 	for _, binOp := range []tree.BinaryOperator{tree.LShift, tree.RShift} {
 		binOpOutputTypes[binOp] = map[typePair]*types.T{
-			typePair{types.IntFamily, anyWidth, types.IntFamily, anyWidth}: types.Int,
-		}
+			{types.IntFamily, anyWidth, types.IntFamily, anyWidth}: types.Int}
 	}
 
 	binOpOutputTypes[tree.JSONFetchVal] = map[typePair]*types.T{
