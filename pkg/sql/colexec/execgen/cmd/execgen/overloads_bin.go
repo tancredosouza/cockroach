@@ -24,6 +24,11 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/types"
 )
 
+var binaryOpIntMethod = map[tree.BinaryOperator]string{
+	tree.LShift:     "LShift",
+	tree.RShift:     "RShift",
+}
+
 var binaryOpDecMethod = map[tree.BinaryOperator]string{
 	tree.Plus:     "Add",
 	tree.Minus:    "Sub",
@@ -466,14 +471,15 @@ func (c intCustomizer) getBinOpAssignFunc() assignFunc {
 
 		case tree.LShift, tree.RShift:
 			// TODO(tancredosouza): How should SQL telemetry be translated here?
-			t = template.Must(template.New("").Parse(`
+			t = template.Must(template.New("").Parse(fmt.Sprintf(`
 			{
 				if {{.Right}} < 0 || {{.Right}} >= 64 {
+					telemetry.Inc(sqltelemetry.Large%sArgumentCounter)
 					colexecerror.ExpectedError(tree.ErrShiftArgOutOfRange)
 				}
 				{{.Target}} = {{.Left}} {{.Op}} {{.Right}}
 			}
-			`))
+			`, binaryOpIntMethod[binOp])))
 
 		default:
 			colexecerror.InternalError(fmt.Sprintf("unhandled binary operator %s", op.overloadBase.OpStr))
