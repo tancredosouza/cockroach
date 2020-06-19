@@ -25,8 +25,8 @@ import (
 )
 
 var binaryOpIntMethod = map[tree.BinaryOperator]string{
-	tree.LShift:     "LShift",
-	tree.RShift:     "RShift",
+	tree.LShift: "LShift",
+	tree.RShift: "RShift",
 }
 
 var binaryOpDecMethod = map[tree.BinaryOperator]string{
