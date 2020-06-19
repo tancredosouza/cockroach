@@ -470,7 +470,6 @@ func (c intCustomizer) getBinOpAssignFunc() assignFunc {
 		`, op.overloadBase.OpStr)))
 
 		case tree.LShift, tree.RShift:
-			// TODO(tancredosouza): How should SQL telemetry be translated here?
 			t = template.Must(template.New("").Parse(fmt.Sprintf(`
 			{
 				if {{.Right}} < 0 || {{.Right}} >= 64 {
