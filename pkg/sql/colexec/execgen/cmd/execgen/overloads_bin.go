@@ -177,8 +177,9 @@ func registerBinOpOutputTypes() {
 
 	for _, binOp := range []tree.BinaryOperator{tree.LShift, tree.RShift} {
 		binOpOutputTypes[binOp] = make(map[typePair]*types.T)
+		populateBinOpIntOutputTypeOnIntArgs(binOp)
 		for _, intWidth := range supportedWidthsByCanonicalTypeFamily[types.IntFamily] {
-			binOpOutputTypes[binOp][typePair{types.IntFamily, intWidth, types.IntFamily, anyWidth}] = types.Int
+			binOpOutputTypes[binOp][typePair{typeconv.DatumVecCanonicalTypeFamily, anyWidth, types.IntFamily, intWidth}] = types.Any
 		}
 	}
 

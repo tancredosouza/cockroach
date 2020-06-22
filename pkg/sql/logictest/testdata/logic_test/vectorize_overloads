@@ -361,8 +361,97 @@ VALUES (
         NULL,
         '[1, "hello", {"a": ["foo", {"b": 3}]}]',
         NULL,
-        NULL
+        B'11010'
        )
+
+query T
+EXPLAIN (VEC) SELECT _varbit << 4 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftDatumInt64ConstOp
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit << _int2 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftDatumInt16Op
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit << _int4 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftDatumInt32Op
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit << _int FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projLShiftDatumInt64Op
+    └ *colexec.colBatchScan
+
+
+query T
+EXPLAIN (VEC) SELECT _varbit >> 4 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projRShiftDatumInt64ConstOp
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit >> _int2 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projRShiftDatumInt16Op
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit >> _int4 FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projRShiftDatumInt32Op
+    └ *colexec.colBatchScan
+
+query T
+EXPLAIN (VEC) SELECT _varbit >> _int FROM many_types
+----
+│
+└ Node 1
+  └ *colexec.projRShiftDatumInt64Op
+    └ *colexec.colBatchScan
+
+query T
+SELECT _varbit >> 1 FROM many_types
+----
+NULL
+0
+01
+01101
+
+query T
+SELECT _varbit << 1 FROM many_types
+----
+NULL
+0
+10
+10100
+
+query T
+SELECT _varbit << 3 FROM many_types
+----
+NULL
+0
+00
+10000
 
 query T
 EXPLAIN (VEC) SELECT _json -> _int2 FROM many_types

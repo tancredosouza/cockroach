@@ -56,7 +56,7 @@ var (
 	ErrDivByZero       = pgerror.New(pgcode.DivisionByZero, "division by zero")
 	errSqrtOfNegNumber = pgerror.New(pgcode.InvalidArgumentForPowerFunction, "cannot take square root of a negative number")
 
-	// ErrShiftArgOutOfRange is reported on a shift argument out of range.
+	// ErrShiftArgOutOfRange is reported when a shift argument is out of range.
 	ErrShiftArgOutOfRange = pgerror.New(pgcode.InvalidParameterValue, "shift argument out of range")
 
 	big10E6  = big.NewInt(1e6)
